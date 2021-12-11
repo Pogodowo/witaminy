@@ -17,8 +17,8 @@ def home (request):
     datax = serializers.serialize("python", roboczareceptura.objects.all())
 
 
-    print('datax', datax)
-    sys.stdout.flush()
+    #print('datax', datax)
+    #sys.stdout.flush()
     return render(request,'home.html',{'tabela2':datax})
 
 def formJson (request,skl):
@@ -41,18 +41,18 @@ def dodajsklJson (request):
         for i in data[dodanySkladnik]:
             if type(i)!=list:
                 a=request.POST.get(str(i))
-                print('i', i)
+                #print('i', i)
                 sys.stdout.flush()
-                print('a',a)
-                sys.stdout.flush()
+                #print('a',a)
+                #sys.stdout.flush()
                 #ostatniskl.update(**{i: a})
                 to_updade[i]=a
             else:
-                print('i0', i[0])
-                sys.stdout.flush()
+                #print('i0', i[0])
+                #sys.stdout.flush()
                 a = request.POST.get(str(i[0]))
-                print('a', a)
-                sys.stdout.flush()
+                #print('a', a)
+                #sys.stdout.flush()
                 to_updade[i[0]] = a
 
 
@@ -61,8 +61,8 @@ def dodajsklJson (request):
 
         for key, value in to_updade.items():
             setattr(ostatniskl, key, value)
-        print('ostatniskl.jednostka_z_recepty', ostatniskl.jednostka_z_recepty)
-        sys.stdout.flush()
+        #print('ostatniskl.jednostka_z_recepty', ostatniskl.jednostka_z_recepty)
+        #sys.stdout.flush()
         ostatniskl.save()
 
 
@@ -72,5 +72,40 @@ def dodajsklJson (request):
 
 
 def aktualizujTabela (request):
+    #########uwzględniaie aa################################
+    print('roboczareceptura.objects.last()', roboczareceptura.objects.last(),roboczareceptura.objects.last().aa)
+    sys.stdout.flush()
+    g=roboczareceptura.objects.last().gramy
+    l=roboczareceptura.objects.last().pk
+    print('g', g)
+    sys.stdout.flush()
+    if roboczareceptura.objects.last().aa=='on':
+        for el in roboczareceptura.objects.all().order_by('-pk'):#order_by('-pk')
+            #print('el.gramy',el.gramy,el.pk)
+            #sys.stdout.flush()
+            if el.pk<l and el.gramy != "":
+                break
+            # if el:
+            #     print('el', el)
+            #     sys.stdout.flush()
+            else:
+                el.gramy = g
+                el.obey=l
+                el.save()
+    #print('el.gramy', roboczareceptura.objects.last(), roboczareceptura.objects.last().pk)
+    #sys.stdout.flush()
+    ####################################################
+    ########### kasowanie ilości g po usunięciu skłądnika z aa#########################
+    for el in roboczareceptura.objects.all():
+        print('roboczareceptura.objects.filter(pk=el.obey).exists()',roboczareceptura.objects.filter(pk=el.obey).exists())
+        sys.stdout.flush()
+        if roboczareceptura.objects.filter(pk=el.obey).exists():
+            pass
+        else:
+            if el.obey!=None:
+                el.gramy=''
+                el.obey= None
+                el.save()
+    ########################################################################################
     datax = serializers.serialize("python", roboczareceptura.objects.all())
     return JsonResponse({'tabela_zbiorcza':datax})
