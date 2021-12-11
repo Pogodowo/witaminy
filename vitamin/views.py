@@ -8,7 +8,7 @@ from .models import roboczareceptura
 from .algorytmy import Przeliczanie
 
 forms={'witamina A':VitAForm,'witamina E':VitEForm,'Hydrokortyzon': HydrokortyzonForm}
-data={'witamina A':[['jednostka_z_recepty','opakowania','gramy','jednostki'],'ilosc_na_recepcie',['producent','Hasco 4500j.m./ml','Medana 50000j.m./ml'],],'witamina E':['opakowania','gramy','jednostki',['producent','Hasco 0,3g/ml']],'Hydrokortyzon':['gramy','aa'],}
+data={'witamina A':[['jednostka_z_recepty','opakowania','gramy','jednostki'],'ilosc_na_recepcie',['producent','Hasco 4500j.m./ml','Medana 50000j.m./ml'],],'witamina E':['opakowania','gramy','jednostki',['producent','Hasco 0,3g/ml']],'Hydrokortyzon':['gramy','aa'],'Metronidazol':['gramy','aa'],}
 def home (request):
     skladniki = roboczareceptura.objects.all()
     t = []
@@ -23,7 +23,7 @@ def home (request):
 
 def formJson (request,skl):
 
-    form=forms[skl]
+    #form=forms[skl]
     datadict=data[skl]
 
     context={ 'datadict':datadict}

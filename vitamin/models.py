@@ -49,7 +49,7 @@ class roboczareceptura (models.Model):
     tabletki= models.CharField(max_length=40, default='0')
     czesci = models.CharField(max_length=40, default='0')
     producent = models.TextField(choices=producenci,blank=True, null=True)
-    aa=models.BooleanField(default=False)
+    aa=models.CharField(max_length=20,default='off')
 
     def __str__(self):
         return   (self.skladnik)

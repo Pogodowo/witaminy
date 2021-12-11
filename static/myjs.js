@@ -40,7 +40,7 @@ const dodanyId=0
             elementyTabeli.map(item=>{
             console.log('itemTabeli',item.fields.skladnik);
             const div=document.createElement('div')
-            div.innerHTML+=item.fields.skladnik
+            div.innerHTML+=item.fields.skladnik+'  '+item.fields.gramy
             div.innerHTML+='<br>'
             console.log('div',div);
             tabelaDocelowa.appendChild(div);})
@@ -54,10 +54,10 @@ const dodanyId=0
 
 
 
-skladnikBox.addEventListener( 'change', e=>{console.log( event.target.value );
+skladnikBox.addEventListener( 'change', e=>{console.log( 'event.target.value',event.target.value );
 
                                         skl=event.target.selectedOptions[0].text;
-                                        console.log(skl);
+                                        console.log('skl',skl);
                                        modalTytul.innerText=event.target.selectedOptions[0].text;
 ``
                                        $("#exampleModal").modal('show');
@@ -121,6 +121,24 @@ skladnikBox.addEventListener( 'change', e=>{console.log( event.target.value );
                                             }
                                         }else{
 
+
+                                        if (item=='aa'){
+                                        const label=document.createElement('label')
+                                        label.textContent=item
+                                        const check = document.createElement("input");
+                                        check.setAttribute('type',"checkbox")
+                                        check.setAttribute('value','off')
+                                        check.setAttribute('id',`${skl}-${item}`)
+                                        console.log('idwimpucie',`${skl}-${item}`)
+                                        check.setAttribute('class','elFormDelete')
+                                        label.setAttribute('class','elFormDelete')
+                                        //check.setAttribute('class','checkBox')
+                                        check.setAttribute('name','checkBox')
+                                        formBox.appendChild(check)
+                                        formBox.appendChild(label)
+                                        console.log('checkvalue',check.value)
+                                        } else
+                                        {
                                         const label=document.createElement('label')
                                         const input=document.createElement('input')
                                         input.setAttribute('class','elFormDelete')
@@ -133,14 +151,20 @@ skladnikBox.addEventListener( 'change', e=>{console.log( event.target.value );
                                         formBox.appendChild(label)
                                         formBox.appendChild(input)
                                         formBox.appendChild(br)
-                                        }
+                                        }}
                                         })
-                                        /////tu wstawiam///
+
+
                                         dodajSkladnikButton.addEventListener('click',e=>{console.log('kliknąłem');
+                                            /////tutaj wstawię kod który będzie sprawdzał czy radio button jest wciśnięty///
+                                            const checkButtons = document.getElementsByName('checkBox')
+                                            console.log('checkButtons',checkButtons)
+                                            for (let check of checkButtons){if (check.checked){ check.value='on'}else{check.value='off'}}
+                                            /////////////////////////////////////////////////////////////////////////////
                                             ///tworzenie daty formulara i odpowiedzi do ajaxa////////////////////
                                             dataf={'csrfmiddlewaretoken': csrf[0].value,'skladnik':skl}
                                             console.log('elementyForm',elementyForm)
-                                            console.log('idwdataf',`${skl}-${i}`)
+                                            //console.log('idwdataf',`${skl}-${i}`)
                                             for ( var i in elementyForm )if ( Array.isArray(elementyForm[i])){ console.log('na razie nie umiem tabeli',`${skl}-${elementyForm[i][0]}`);dataf[elementyForm[i][0]]=document.getElementById(`${skl}-${elementyForm[i][0]}`).value}else{console.log('i',i,`${skl}-${elementyForm[i]}`);dataf[elementyForm[i]]=document.getElementById(`${skl}-${elementyForm[i]}`).value}
                                             console.log('elementyForm',elementyForm)
                                             console.log('dataf',dataf)
@@ -163,43 +187,31 @@ skladnikBox.addEventListener( 'change', e=>{console.log( event.target.value );
                                                         }
 
                                                       const div=document.createElement('div')
-                                                      div.innerHTML+=listaskladnikow.skladnik
+                                                      div.innerHTML+=listaskladnikow.skladnik +'  '+listaskladnikow.gramy
                                                       console.log('listaskladnikow.skladnik',listaskladnikow.skladnik)
                                                       tabelaDocelowa.appendChild(div)
-
-
-                                                      removeElementsByClass('elFormDelete');
-                                                      $("#exampleModal").modal('hide');
-
 
                                                                     },
                                            error : function(error){
                                                         console.log(' dupa nie działa');
 
-
-
-//
                                                                                 }
                                      });
                                      /////koniec ajaxa
+                                     removeElementsByClass('elFormDelete');
+                                                      $("#exampleModal").modal('hide');
 
                                      })
 
                                         /////tu koniec wstawania//////
 
-
-
                                         },
                                         error : function (response){
                                         console.log('error', error)}
                                         }),
-
                                         skladnikBox.selectedIndex = 0;
 
-
-
                                      })
-
 
 //////////////////////3pozycja/////////////////////////////////////////////////////
 closeButton.addEventListener('click',e=>{console.log('kliknąłem close ');$("#exampleModal").modal('hide');
