@@ -40,16 +40,36 @@ const dodanyId=0
             elementyTabeli.map(item=>{
             console.log('itemTabeli',item.fields.skladnik);
             const div=document.createElement('div')
+            ///////dodawanie przycisku do usuwania////////////////
+            var deleteButton = document.createElement("button");
+
+//          element.type = type;type="button" class="close" data-dismiss="modal" aria-label="Close"
+            deleteButton.setAttribute('type','button');
+            deleteButton.setAttribute('class',"btn-close");
+            deleteButton.setAttribute('aria-label','Close');
+            deleteButton.setAttribute('id',item.pk);
+            deleteButton.setAttribute('onclick',delItem);
+            deleteButton.onclick = function(
+            ) { // Note this is a function
+            alert("blabla");
+          };
+            //////////////////////////////////////////////////////
             div.innerHTML+=item.fields.skladnik+'  '+item.fields.gramy
-            div.innerHTML+='<br>'
             console.log('div',div);
-            tabelaDocelowa.appendChild(div);})
+            div.appendChild(deleteButton);
+            tabelaDocelowa.appendChild(div);
+            //div.innerHTML+='<br>'
+
+
+            })
             },
             error : function (error){console.log('error')},
             })
 /////////////////////////////a tutaj koniec ajaxa, który aktualizuję tabelę/////////////
 
-
+function delItem() {
+  alert("blabla");
+}
 
 
 

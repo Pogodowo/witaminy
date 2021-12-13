@@ -79,6 +79,21 @@ def aktualizujTabela (request):
     l=roboczareceptura.objects.last().pk
     print('g', g)
     sys.stdout.flush()
+    #auto aa
+    print('roboczareceptura.objects.all().order_by("-pk")[1]', roboczareceptura.objects.all().order_by('-pk')[1].pk)
+    sys.stdout.flush()
+    print(roboczareceptura.objects.last().aa=='off', roboczareceptura.objects.last().gramy!="",roboczareceptura.objects.all().order_by('-pk')[1].gramy=="")
+    sys.stdout.flush()
+    print('roboczareceptura.objects.last()', roboczareceptura.objects.last())
+    sys.stdout.flush()
+    last=roboczareceptura.objects.last()
+    # last.aa = 'on'
+    # last.save()
+    if roboczareceptura.objects.last().aa=='off' and roboczareceptura.objects.last().gramy!=""  and roboczareceptura.objects.all().order_by('-pk')[1].gramy=="":
+       last.aa ="on"
+       last.save()
+
+    print('roboczareceptura.objects.last().aa',roboczareceptura.objects.last().aa)
     if roboczareceptura.objects.last().aa=='on':
         for el in roboczareceptura.objects.all().order_by('-pk'):#order_by('-pk')
             #print('el.gramy',el.gramy,el.pk)
