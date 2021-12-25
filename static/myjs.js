@@ -17,6 +17,22 @@ window.onload = function(){
 const test=document.getElementById('testowo');
 test.innerHTML='dupowaty test';}
 
+
+/////funkcja do usuwania składnika///////////////////////////
+function usuwanieSkladnika (pk){
+        $.ajax({
+                        type: 'GET',
+                        url: `delSkl/${ pk }/`,
+                        success : function(response){console.log('sukces ajaxa z del');
+                        tabelaDocelowa.innerHTML='';
+                        updateTable()
+
+                        },//koniec sukcesa
+                        error : function (error){console.log('brak sukcesu ajaxa z del')},
+                        })
+
+}
+////////////////////////////////////////////////////////////
 ////////funkcja z ajaxem do aktualizacji taveli///////
 function updateTable(){
          $.ajax({
@@ -40,20 +56,12 @@ function updateTable(){
             deleteButton.setAttribute('class',"btn-close");
             deleteButton.setAttribute('aria-label','Close');
             deleteButton.setAttribute('id',item.pk);
-            deleteButton.setAttribute('onclick',delItem);
-            deleteButton.onclick = function() {
-            $.ajax({
-                type: 'GET',
-                url: `delSkl/${ item.pk }/`,
-                success : function(response){console.log('sukces ajaxa z del');
-
-                },//koniec sukcesa
-                error : function (error){console.log('brak sukcesu ajaxa z del')},
-                })
+            //deleteButton.setAttribute('onclick',delItem);
+            deleteButton.onclick = function() {usuwanieSkladnika(item.pk);
+            }
 
 
-            //alert("blabla");
-          };
+
             //////////////////////////////////////////////////////
             div.innerHTML+=item.fields.skladnik+'  '+item.fields.gramy
             console.log('div',div);
@@ -68,14 +76,14 @@ function updateTable(){
             })
 }
 //////////koniec funkcji z ajaxem do aktualizacji tabeli//////
-
+////funkcja do usuwania formularza z modala
 function removeElementsByClass(className){
     const elements = document.getElementsByClassName(className);
     while(elements.length > 0){
         elements[0].parentNode.removeChild(elements[0]);
     }
 }
-
+////////////////////////////////////////////////////////////////////
 const dodanyId=0
 
 updateTable()
