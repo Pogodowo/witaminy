@@ -15,17 +15,10 @@ def home (request):
     for i in skladniki:
         t.append(i.skladnik)
     datax = serializers.serialize("python", roboczareceptura.objects.all())
-
-
-    #print('datax', datax)
-    #sys.stdout.flush()
     return render(request,'home.html',{'tabela2':datax})
 
 def formJson (request,skl):
-
-    #form=forms[skl]
     datadict=data[skl]
-
     context={ 'datadict':datadict}
     return JsonResponse(context)
 
@@ -41,31 +34,16 @@ def dodajsklJson (request):
         for i in data[dodanySkladnik]:
             if type(i)!=list:
                 a=request.POST.get(str(i))
-                #print('i', i)
                 sys.stdout.flush()
-                #print('a',a)
-                #sys.stdout.flush()
-                #ostatniskl.update(**{i: a})
                 to_updade[i]=a
             else:
-                #print('i0', i[0])
-                #sys.stdout.flush()
                 a = request.POST.get(str(i[0]))
-                #print('a', a)
-                #sys.stdout.flush()
                 to_updade[i[0]] = a
 
-
-
         to_updade=Przeliczanie(dodanySkladnik,to_updade)
-
         for key, value in to_updade.items():
             setattr(ostatniskl, key, value)
-        #print('ostatniskl.jednostka_z_recepty', ostatniskl.jednostka_z_recepty)
-        #sys.stdout.flush()
         ostatniskl.save()
-
-
 
         return JsonResponse({'tabela':to_updade})
     return JsonResponse({'nie dodano skladnika': False, }, safe=False)
@@ -80,40 +58,25 @@ def aktualizujTabela (request):
     print('g', g)
     sys.stdout.flush()
     #auto aa
-    print('roboczareceptura.objects.all().order_by("-pk")[1]', roboczareceptura.objects.all().order_by('-pk')[1].pk)
-    sys.stdout.flush()
-    print(roboczareceptura.objects.last().aa=='off', roboczareceptura.objects.last().gramy!="",roboczareceptura.objects.all().order_by('-pk')[1].gramy=="")
-    sys.stdout.flush()
-    print('roboczareceptura.objects.last()', roboczareceptura.objects.last())
-    sys.stdout.flush()
+    all=roboczareceptura.objects.all()
     last=roboczareceptura.objects.last()
-    # last.aa = 'on'
-    # last.save()
-    if roboczareceptura.objects.last().aa=='off' and roboczareceptura.objects.last().gramy!=""  and roboczareceptura.objects.all().order_by('-pk')[1].gramy=="":
+    if len(all)>1 and roboczareceptura.objects.last().aa=='off' and roboczareceptura.objects.last().gramy!=""  and roboczareceptura.objects.all().order_by('-pk')[1].gramy=="":
        last.aa ="on"
        last.save()
-
     print('roboczareceptura.objects.last().aa',roboczareceptura.objects.last().aa)
     if roboczareceptura.objects.last().aa=='on':
         for el in roboczareceptura.objects.all().order_by('-pk'):#order_by('-pk')
-            #print('el.gramy',el.gramy,el.pk)
-            #sys.stdout.flush()
             if el.pk<l and el.gramy != "":
                 break
-            # if el:
-            #     print('el', el)
-            #     sys.stdout.flush()
             else:
                 el.gramy = g
                 el.obey=l
                 el.save()
-    #print('el.gramy', roboczareceptura.objects.last(), roboczareceptura.objects.last().pk)
-    #sys.stdout.flush()
+
     ####################################################
     ########### kasowanie ilości g po usunięciu skłądnika z aa#########################
     for el in roboczareceptura.objects.all():
-        print('roboczareceptura.objects.filter(pk=el.obey).exists()',roboczareceptura.objects.filter(pk=el.obey).exists())
-        sys.stdout.flush()
+
         if roboczareceptura.objects.filter(pk=el.obey).exists():
             pass
         else:
@@ -124,3 +87,12 @@ def aktualizujTabela (request):
     ########################################################################################
     datax = serializers.serialize("python", roboczareceptura.objects.all())
     return JsonResponse({'tabela_zbiorcza':datax})
+
+
+def delSkl (request, id):
+    deletedElement=roboczareceptura.objects.filter(pk=id)
+    response=serializers.serialize("python", deletedElement)
+    deletedElement.delete()
+    print('response', response)
+    sys.stdout.flush()
+    return JsonResponse({'response':response})

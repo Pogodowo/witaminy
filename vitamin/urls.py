@@ -8,4 +8,5 @@ urlpatterns = [
     path('formJson/<str:skl>/', views.formJson, name='formJson'),
     path('dodajskl/', views.dodajsklJson, name='dodajsklJson'),
     path('aktualizujTabela/', views.aktualizujTabela, name='aktualizujTabela'),
+    path('delSkl/<str:id>/', views.delSkl, name='delSkl'),
 ]

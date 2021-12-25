@@ -10,24 +10,16 @@ const prowizorycznatabelaBox=document.getElementById('prowizorycznatabela')
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
 const tabelaDocelowa=document.getElementById('tabela-docelowa')
 //console.log('tabelaDocelowa',tabelaDocelowa)
+const deleteButtons=document.getElementsByClassName("btn-close")
 
-
+console.log('close buttons', deleteButtons)
 window.onload = function(){
 const test=document.getElementById('testowo');
 test.innerHTML='dupowaty test';}
 
-
-
-function removeElementsByClass(className){
-    const elements = document.getElementsByClassName(className);
-    while(elements.length > 0){
-        elements[0].parentNode.removeChild(elements[0]);
-    }
-}
-
-const dodanyId=0
-//////////////////////////////Tutaj wrzucę ajaxa który będzie dynamicznie aktualizował tabelę//////////////
- $.ajax({
+////////funkcja z ajaxem do aktualizacji taveli///////
+function updateTable(){
+         $.ajax({
             type: 'GET',
             url: 'aktualizujTabela/',
             success : function(response){
@@ -49,9 +41,18 @@ const dodanyId=0
             deleteButton.setAttribute('aria-label','Close');
             deleteButton.setAttribute('id',item.pk);
             deleteButton.setAttribute('onclick',delItem);
-            deleteButton.onclick = function(
-            ) { // Note this is a function
-            alert("blabla");
+            deleteButton.onclick = function() {
+            $.ajax({
+                type: 'GET',
+                url: `delSkl/${ item.pk }/`,
+                success : function(response){console.log('sukces ajaxa z del');
+
+                },//koniec sukcesa
+                error : function (error){console.log('brak sukcesu ajaxa z del')},
+                })
+
+
+            //alert("blabla");
           };
             //////////////////////////////////////////////////////
             div.innerHTML+=item.fields.skladnik+'  '+item.fields.gramy
@@ -65,6 +66,67 @@ const dodanyId=0
             },
             error : function (error){console.log('error')},
             })
+}
+//////////koniec funkcji z ajaxem do aktualizacji tabeli//////
+
+function removeElementsByClass(className){
+    const elements = document.getElementsByClassName(className);
+    while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
+}
+
+const dodanyId=0
+
+updateTable()
+//////////////////////////////Tutaj wrzucę ajaxa który będzie dynamicznie aktualizował tabelę//////////////
+// $.ajax({
+//            type: 'GET',
+//            url: 'aktualizujTabela/',
+//            success : function(response){
+//            console.log('Sukces ajaxa z tabelą', response);
+//            let elementyTabeli=response.tabela_zbiorcza
+//            console.log('elementyTabeli', response.tabela_zbiorcza)
+//
+//            //let tabelaDocelowa=document.getElementById("tabela-docelowa");
+//
+//            elementyTabeli.map(item=>{
+//            console.log('itemTabeli',item.fields.skladnik);
+//            const div=document.createElement('div')
+//            ///////dodawanie przycisku do usuwania////////////////
+//            var deleteButton = document.createElement("button");
+//
+////          element.type = type;type="button" class="close" data-dismiss="modal" aria-label="Close"
+//            deleteButton.setAttribute('type','button');
+//            deleteButton.setAttribute('class',"btn-close");
+//            deleteButton.setAttribute('aria-label','Close');
+//            deleteButton.setAttribute('id',item.pk);
+//            deleteButton.setAttribute('onclick',delItem);
+//            deleteButton.onclick = function() {
+//            $.ajax({
+//                type: 'GET',
+//                url: `delSkl/${ item.pk }/`,
+//                success : function(response){console.log('sukces ajaxa z del');
+//
+//                },//koniec sukcesa
+//                error : function (error){console.log('brak sukcesu ajaxa z del')},
+//                })
+//
+//
+//            //alert("blabla");
+//          };
+//            //////////////////////////////////////////////////////
+//            div.innerHTML+=item.fields.skladnik+'  '+item.fields.gramy
+//            console.log('div',div);
+//            div.appendChild(deleteButton);
+//            tabelaDocelowa.appendChild(div);
+//            //div.innerHTML+='<br>'
+//
+//
+//            })
+//            },
+//            error : function (error){console.log('error')},
+//            })
 /////////////////////////////a tutaj koniec ajaxa, który aktualizuję tabelę/////////////
 
 function delItem() {
@@ -197,20 +259,21 @@ skladnikBox.addEventListener( 'change', e=>{console.log( 'event.target.value',ev
                                                       console.log('response.tabela',response.tabela)
 
 //                                                      wypisywanie skladników
-                                                      const listaskladnikow=response.tabela
-                                                      for (const [key, value] of Object.entries(listaskladnikow)) {
-                                                          const div=document.createElement('div')
+//                                                      const listaskladnikow=response.tabela
+//                                                      for (const [key, value] of Object.entries(listaskladnikow)) {
+//                                                          const div=document.createElement('div')
+//
+//                                                          div.innerHTML+=key
+//                                                          div.innerHTML+=value
+//                                                          prowizorycznatabelaBox.appendChild(div)
+//                                                        }
 
-                                                          div.innerHTML+=key
-                                                          div.innerHTML+=value
-                                                          prowizorycznatabelaBox.appendChild(div)
-                                                        }
-
-                                                      const div=document.createElement('div')
-                                                      div.innerHTML+=listaskladnikow.skladnik +'  '+listaskladnikow.gramy
-                                                      console.log('listaskladnikow.skladnik',listaskladnikow.skladnik)
-                                                      tabelaDocelowa.appendChild(div)
-
+//                                                      const div=document.createElement('div')
+//                                                      div.innerHTML+=listaskladnikow.skladnik +'  '+listaskladnikow.gramy
+//                                                      console.log('listaskladnikow.skladnik',listaskladnikow.skladnik)
+//                                                      tabelaDocelowa.appendChild(div)
+                                                        tabelaDocelowa.innerHTML=''
+                                                        updateTable()
                                                                     },
                                            error : function(error){
                                                         console.log(' dupa nie działa');
@@ -234,9 +297,9 @@ skladnikBox.addEventListener( 'change', e=>{console.log( 'event.target.value',ev
                                      })
 
 //////////////////////3pozycja/////////////////////////////////////////////////////
+
 closeButton.addEventListener('click',e=>{console.log('kliknąłem close ');$("#exampleModal").modal('hide');
                                            removeElementsByClass('elFormDelete'); })
-
 
 
 
