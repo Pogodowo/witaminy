@@ -1,15 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>
-<div class="red">siemka</div>
-<form autocomplete="off" class="mt-5 mx-3">
-  <div class="autocomplete" style="width:300px;">
-    <input id="myInput" type="text" name="myCountry" placeholder="Country">
-  </div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+        <form autocomplete="off" class="mt-5">
+          <div class="autocomplete" style="width:300px;">
+            <input id="myInput" type="text" name="myCountry" placeholder="Country">
+          </div>
 
-</form>
-<button type="submit" class="btn btn-secondary mt-1 mx-3" id="submitButton" > Nowy button</button>
+        </form>
+        <button type="submit" class="btn btn-secondary mt-1 " id="submitButton" > Nowy button</button>
+            </div>
+    </div>
+    <div class="row">
+        <div class="col">
+         <div id="tabela-docelowa" class="mt-5"></div>
+        </div>
+
+        <div class="col">
+            <div id='cards' class="red mt-5">siemka</div>
+        </div>
+
+    </div>
 </div>
 
 <!--<div class="dropdown mt-5 mx-3" >-->
@@ -28,11 +41,10 @@
 <!--    <option value="4">Metronidazol</option>-->
 
 <!--  </select>-->
-   <div  data-bs-toggle="modal" data-bs-target="#exampleModal"></div>
-</div>
+
 <br><br><br>
 <!-- Button trigger modal -->
-<div id="tabela-docelowa" class="mx-3"></div>
+
 <br>
 <br>
 <!--modal-->

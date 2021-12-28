@@ -13,6 +13,7 @@ const tabelaDocelowa=document.getElementById('tabela-docelowa')
 const deleteButtons=document.getElementsByClassName("btn-close")
 const inputBox=document.getElementById("myInput")
 const autocompleteButton=document.getElementById("submitButton")
+cardBox=document.getElementById('cards')
 
 console.log('close buttons', deleteButtons)
 
@@ -148,7 +149,7 @@ function updateTable(){
             console.log('elementyTabeli', response.tabela_zbiorcza)
 
             //let tabelaDocelowa=document.getElementById("tabela-docelowa");
-
+            cardBox.innerHTML=''
             elementyTabeli.map(item=>{
             console.log('itemTabeli',item.fields.skladnik);
             const div=document.createElement('div')
@@ -172,6 +173,34 @@ function updateTable(){
             div.appendChild(deleteButton);
             tabelaDocelowa.appendChild(div);
             //div.innerHTML+='<br>'
+            ///////////////dodawanie kart/////////////////
+      card=document.createElement('div')
+
+          card.setAttribute('class','card')
+          card.setAttribute('style','width: 18rem;')
+
+   var ul=document.createElement('ul')
+        ul.setAttribute('class','list-group list-group-flush')
+   var li=document.createElement('li')
+        li.setAttribute('class','list-group-item')
+        li.innerHTML=item.fields.skladnik
+        ul.appendChild(li)
+   var li2=document.createElement('li')
+       li2.setAttribute('class','list-group-item')
+        /////////wypisywanie atrybutów danego składnika/////
+        for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0'){
+//                                                          const div=document.createElement('div')
+                  li2.innerHTML+=' '+key+': '
+                  li2.innerHTML+=value+' ,'
+//                                                          prowizorycznatabelaBox.appendChild(div)
+                                                    }}
+        ///////////////////////////////////////////////////
+
+        ul.appendChild(li2)
+        card.appendChild(ul)
+        cardBox.appendChild(card)
+
+            //////////////////////////////////////////////
 
 
             })
