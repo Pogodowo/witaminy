@@ -11,14 +11,118 @@ const csrf = document.getElementsByName('csrfmiddlewaretoken')
 const tabelaDocelowa=document.getElementById('tabela-docelowa')
 //console.log('tabelaDocelowa',tabelaDocelowa)
 const deleteButtons=document.getElementsByClassName("btn-close")
+const inputBox=document.getElementById("myInput")
+const autocompleteButton=document.getElementById("submitButton")
 
 console.log('close buttons', deleteButtons)
-window.onload = function(){
-const test=document.getElementById('testowo');
-test.innerHTML='dupowaty test';}
+
+
+var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol"]
+/////////////////js do autouzupełniania////////////////////////////////////////////////////////////
+function autocomplete(inp, arr) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+              b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+      x[i].parentNode.removeChild(x[i]);
+    }
+  }
+}
+/*execute a function when someone clicks in the document:*/
+document.addEventListener("click", function (e) {
+    closeAllLists(e.target);
+});
+}
+
+
+autocomplete(inputBox, ingridients);
+////koniec js do autouzupełmiania/////////////////////////////////////////////////////////////////
 
 
 /////funkcja do usuwania składnika///////////////////////////
+
 function usuwanieSkladnika (pk){
         $.ajax({
                         type: 'GET',
@@ -87,69 +191,25 @@ function removeElementsByClass(className){
 const dodanyId=0
 
 updateTable()
-//////////////////////////////Tutaj wrzucę ajaxa który będzie dynamicznie aktualizował tabelę//////////////
-// $.ajax({
-//            type: 'GET',
-//            url: 'aktualizujTabela/',
-//            success : function(response){
-//            console.log('Sukces ajaxa z tabelą', response);
-//            let elementyTabeli=response.tabela_zbiorcza
-//            console.log('elementyTabeli', response.tabela_zbiorcza)
-//
-//            //let tabelaDocelowa=document.getElementById("tabela-docelowa");
-//
-//            elementyTabeli.map(item=>{
-//            console.log('itemTabeli',item.fields.skladnik);
-//            const div=document.createElement('div')
-//            ///////dodawanie przycisku do usuwania////////////////
-//            var deleteButton = document.createElement("button");
-//
-////          element.type = type;type="button" class="close" data-dismiss="modal" aria-label="Close"
-//            deleteButton.setAttribute('type','button');
-//            deleteButton.setAttribute('class',"btn-close");
-//            deleteButton.setAttribute('aria-label','Close');
-//            deleteButton.setAttribute('id',item.pk);
-//            deleteButton.setAttribute('onclick',delItem);
-//            deleteButton.onclick = function() {
-//            $.ajax({
-//                type: 'GET',
-//                url: `delSkl/${ item.pk }/`,
-//                success : function(response){console.log('sukces ajaxa z del');
-//
-//                },//koniec sukcesa
-//                error : function (error){console.log('brak sukcesu ajaxa z del')},
-//                })
-//
-//
-//            //alert("blabla");
-//          };
-//            //////////////////////////////////////////////////////
-//            div.innerHTML+=item.fields.skladnik+'  '+item.fields.gramy
-//            console.log('div',div);
-//            div.appendChild(deleteButton);
-//            tabelaDocelowa.appendChild(div);
-//            //div.innerHTML+='<br>'
-//
-//
-//            })
-//            },
-//            error : function (error){console.log('error')},
-//            })
-/////////////////////////////a tutaj koniec ajaxa, który aktualizuję tabelę/////////////
-
-function delItem() {
-  alert("blabla");
-}
 
 
 
 
-skladnikBox.addEventListener( 'change', e=>{console.log( 'event.target.value',event.target.value );
 
-                                        skl=event.target.selectedOptions[0].text;
-                                        console.log('skl',skl);
-                                       modalTytul.innerText=event.target.selectedOptions[0].text;
-``
+/////////////////////////////////////////////////////////////////////////////////////////////
+autocompleteButton.addEventListener( 'click', e=>{console.log('kliknąłem autocomplete button');
+
+                                       skl=inputBox.value;
+                                   console.log('skladnik',skl);
+                                 modalTytul.innerText=inputBox.value;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//skladnikBox.addEventListener( 'change', e=>{console.log( 'event.target.value',event.target.value );
+//
+//                                        skl=event.target.selectedOptions[0].text;
+//                                        console.log('skl',skl);
+//                                       modalTytul.innerText=event.target.selectedOptions[0].text;
+
                                        $("#exampleModal").modal('show');
                                        ////////////////ajax pobieranie elementów formularza///////////////////////////////
 

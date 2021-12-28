@@ -1,30 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Czy działa?
-<div id="testowo"></div>
+<div>
+<div class="red">siemka</div>
+<form autocomplete="off" class="mt-5 mx-3">
+  <div class="autocomplete" style="width:300px;">
+    <input id="myInput" type="text" name="myCountry" placeholder="Country">
+  </div>
 
-<div class="dropdown" >
-  <button class="btn btn-secondary dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
-    Dropdown button
-  </button>
-  <select class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="wybieraj" >
-<!--    {% for item in qs %}-->
-<!--    <option value="dupa"><a class="dropdown-item" id='nazwa-skladnika'  href="#">{{ item.nazwa }}</a></option>-->
+</form>
+<button type="submit" class="btn btn-secondary mt-1 mx-3" id="submitButton" > Nowy button</button>
+</div>
 
-<!--    {% endfor %}-->
-    <option value="" selected data-default disabled hidden > wybierz składnik</option>
-    <option value="1" id="dupa">witamina A</option>
-    <option value="2" >witamina E</option>
-    <option value="3">Hydrokortyzon</option>
-    <option value="4">Metronidazol</option>
+<!--<div class="dropdown mt-5 mx-3" >-->
+<!--  <button class="btn btn-secondary dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--    Dropdown button-->
+<!--  </button>-->
+<!--  <select class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="wybieraj" >-->
+<!--&lt;!&ndash;    {% for item in qs %}&ndash;&gt;-->
+<!--&lt;!&ndash;    <option value="dupa"><a class="dropdown-item" id='nazwa-skladnika'  href="#">{{ item.nazwa }}</a></option>&ndash;&gt;-->
 
-  </select>
+<!--&lt;!&ndash;    {% endfor %}&ndash;&gt;-->
+<!--    <option value="" selected data-default disabled hidden > wybierz składnik</option>-->
+<!--    <option value="1" id="dupa">witamina A</option>-->
+<!--    <option value="2" >witamina E</option>-->
+<!--    <option value="3">Hydrokortyzon</option>-->
+<!--    <option value="4">Metronidazol</option>-->
+
+<!--  </select>-->
    <div  data-bs-toggle="modal" data-bs-target="#exampleModal"></div>
 </div>
 <br><br><br>
 <!-- Button trigger modal -->
-<div id="tabela-docelowa"></div>
+<div id="tabela-docelowa" class="mx-3"></div>
 <br>
 <br>
 <!--modal-->
