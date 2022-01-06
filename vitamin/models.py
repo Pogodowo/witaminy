@@ -51,6 +51,9 @@ class roboczareceptura (models.Model):
     producent = models.TextField(choices=producenci,blank=True, null=True)
     aa=models.CharField(max_length=20,default='off')
     obey=models.IntegerField(null=True)
+    sumg=models.IntegerField(default=0)
+    aa_ad=models.CharField(max_length=20,default='off')
+    aa_ad_gramy=models.CharField(max_length=40,default='')
 
     def __str__(self):
         return   (self.skladnik)

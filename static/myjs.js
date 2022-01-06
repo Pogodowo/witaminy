@@ -1,7 +1,7 @@
 console.log('O co tu chodzi?')
 console.log('dupa?')
 const modalBox=document.getElementById("exampleModal")
-const skladnikBox= document.getElementById('wybieraj');
+//const skladnikBox= document.getElementById('wybieraj');
 const modalTytul=document.getElementById("exampleModalLabel")
 const formBox= document.getElementById('modal-form')
 const closeButton=document.getElementById('close-button')
@@ -14,11 +14,12 @@ const deleteButtons=document.getElementsByClassName("btn-close")
 const inputBox=document.getElementById("myInput")
 const autocompleteButton=document.getElementById("submitButton")
 cardBox=document.getElementById('cards')
-
 console.log('close buttons', deleteButtons)
 
 
-var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol"]
+
+
+var ingridients=["witamina A","witamina E","Hydrokortyzon","Metronidazol","Wazelina"]
 /////////////////js do autouzupełniania////////////////////////////////////////////////////////////
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
@@ -129,6 +130,7 @@ function usuwanieSkladnika (pk){
                         type: 'GET',
                         url: `delSkl/${ pk }/`,
                         success : function(response){console.log('sukces ajaxa z del');
+                        cardBox.innerHTML=''
                         tabelaDocelowa.innerHTML='';
                         updateTable()
 
@@ -149,7 +151,9 @@ function updateTable(){
             console.log('elementyTabeli', response.tabela_zbiorcza)
 
             //let tabelaDocelowa=document.getElementById("tabela-docelowa");
+            tabelaDocelowa.innerHTML='';
             cardBox.innerHTML=''
+            var numElem=1
             elementyTabeli.map(item=>{
             console.log('itemTabeli',item.fields.skladnik);
             const div=document.createElement('div')
@@ -168,7 +172,8 @@ function updateTable(){
 
 
             //////////////////////////////////////////////////////
-            div.innerHTML+=item.fields.skladnik+'  '+item.fields.gramy
+            div.innerHTML+= numElem+') ' + item.fields.skladnik+'  '+item.fields.gramy
+
             console.log('div',div);
             div.appendChild(deleteButton);
             tabelaDocelowa.appendChild(div);
@@ -177,16 +182,19 @@ function updateTable(){
       card=document.createElement('div')
 
           card.setAttribute('class','card')
-          card.setAttribute('style','width: 18rem;')
+          card.setAttribute('style','width: 36rem;')
 
    var ul=document.createElement('ul')
         ul.setAttribute('class','list-group list-group-flush')
    var li=document.createElement('li')
         li.setAttribute('class','list-group-item')
-        li.innerHTML=item.fields.skladnik
+        li.innerHTML=numElem+')   '+item.fields.skladnik
         ul.appendChild(li)
    var li2=document.createElement('li')
+       //li2.classList.add( 'li-inline');
        li2.setAttribute('class','list-group-item')
+       //li2.setAttribute('class','li-inline')
+
         /////////wypisywanie atrybutów danego składnika/////
         for (const [key, value] of Object.entries(item.fields)){ if ( value!=null && value!='0'){
 //                                                          const div=document.createElement('div')
@@ -199,6 +207,7 @@ function updateTable(){
         ul.appendChild(li2)
         card.appendChild(ul)
         cardBox.appendChild(card)
+        numElem+=1
 
             //////////////////////////////////////////////
 
@@ -247,7 +256,8 @@ autocompleteButton.addEventListener( 'click', e=>{console.log('kliknąłem autoc
                                         url: `formJson/${ skl }/`,
                                         success : function(response){
                                         console.log('succes spobrania do forma', response);
-                                        let elementyForm = response.datadict
+                                        var elementyForm = response.datadict
+                                        console.log('wczesne elementy form',elementyForm)
 
                                         elementyForm.map(item=>{
                                         if(Array.isArray(item)){if (item[0]==='producent'){
@@ -301,7 +311,7 @@ autocompleteButton.addEventListener( 'click', e=>{console.log('kliknąłem autoc
                                         }else{
 
 
-                                        if (item=='aa'){
+                                        if (item=='aa' || item=='aa_ad'){
                                         const label=document.createElement('label')
                                         label.textContent=item
                                         const check = document.createElement("input");
@@ -342,10 +352,10 @@ autocompleteButton.addEventListener( 'click', e=>{console.log('kliknąłem autoc
                                             /////////////////////////////////////////////////////////////////////////////
                                             ///tworzenie daty formulara i odpowiedzi do ajaxa////////////////////
                                             dataf={'csrfmiddlewaretoken': csrf[0].value,'skladnik':skl}
-                                            console.log('elementyForm',elementyForm)
+                                            console.log('elementyForm1',elementyForm)
                                             //console.log('idwdataf',`${skl}-${i}`)
                                             for ( var i in elementyForm )if ( Array.isArray(elementyForm[i])){ console.log('na razie nie umiem tabeli',`${skl}-${elementyForm[i][0]}`);dataf[elementyForm[i][0]]=document.getElementById(`${skl}-${elementyForm[i][0]}`).value}else{console.log('i',i,`${skl}-${elementyForm[i]}`);dataf[elementyForm[i]]=document.getElementById(`${skl}-${elementyForm[i]}`).value}
-                                            console.log('elementyForm',elementyForm)
+                                            console.log('elementyForm2',elementyForm)
                                             console.log('dataf',dataf)
                                           $.ajax({
                                            type: 'POST' ,
@@ -388,8 +398,8 @@ autocompleteButton.addEventListener( 'click', e=>{console.log('kliknąłem autoc
                                         },
                                         error : function (response){
                                         console.log('error', error)}
-                                        }),
-                                        skladnikBox.selectedIndex = 0;
+                                        })
+                                        //skladnikBox.selectedIndex = 0;
 
                                      })
 

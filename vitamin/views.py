@@ -8,7 +8,7 @@ from .models import roboczareceptura
 from .algorytmy import Przeliczanie
 
 forms={'witamina A':VitAForm,'witamina E':VitEForm,'Hydrokortyzon': HydrokortyzonForm}
-data={'witamina A':[['jednostka_z_recepty','opakowania','gramy','jednostki'],'ilosc_na_recepcie',['producent','Hasco 4500j.m./ml','Medana 50000j.m./ml'],],'witamina E':['opakowania','gramy','jednostki',['producent','Hasco 0,3g/ml']],'Hydrokortyzon':['gramy','aa'],'Metronidazol':['gramy','aa'],}
+data={'witamina A':[['jednostka_z_recepty','opakowania','gramy','jednostki'],'ilosc_na_recepcie',['producent','Hasco 4500j.m./ml','Medana 50000j.m./ml'],],'witamina E':['opakowania','gramy','jednostki',['producent','Hasco 0,3g/ml']],'Hydrokortyzon':['gramy','aa'],'Metronidazol':['gramy','aa'],'Wazelina':['gramy','aa','aa_ad']}
 def home (request):
     skladniki = roboczareceptura.objects.all()
     t = []
@@ -34,15 +34,20 @@ def dodajsklJson (request):
         for i in data[dodanySkladnik]:
             if type(i)!=list:
                 a=request.POST.get(str(i))
-                sys.stdout.flush()
+
                 to_updade[i]=a
             else:
                 a = request.POST.get(str(i[0]))
                 to_updade[i[0]] = a
-
+        print('to_update',to_updade)
+        sys.stdout.flush()
+        if 'aa_ad' in to_updade:
+            to_updade['aa_ad_gramy']=to_updade['gramy']
         to_updade=Przeliczanie(dodanySkladnik,to_updade)
         for key, value in to_updade.items():
             setattr(ostatniskl, key, value)
+        # if ostatniskl.aa_ad=='on':
+        #     ostatniskl.aa_ad_gramy=ostatniskl.gramy
         ostatniskl.save()
 
         return JsonResponse({'tabela':to_updade})
@@ -58,11 +63,22 @@ def aktualizujTabela (request):
     print('g', g)
     sys.stdout.flush()
     #auto aa
+
     all=roboczareceptura.objects.all()
     last=roboczareceptura.objects.last()
-    if len(all)>1 and roboczareceptura.objects.last().aa=='off' and roboczareceptura.objects.last().gramy!=""  and roboczareceptura.objects.all().order_by('-pk')[1].gramy=="":
+    sumskl = 0
+    for i in all:
+        if i.gramy.isdigit() and i.gramy!='0':
+            sumskl+=int(i.gramy)
+    print('sumskl', sumskl)
+    sys.stdout.flush()
+
+    if len(all)>1 and last.aa=='off' and last.gramy!=""  and all.order_by('-pk')[1].gramy=="":
        last.aa ="on"
        last.save()
+    if last.aa_ad=='on' and last.aa=='on':
+        last.aa='off'
+        last.save()
     print('roboczareceptura.objects.last().aa',roboczareceptura.objects.last().aa)
     if roboczareceptura.objects.last().aa=='on':
         for el in roboczareceptura.objects.all().order_by('-pk'):#order_by('-pk')
@@ -85,6 +101,55 @@ def aktualizujTabela (request):
                 el.obey= None
                 el.save()
     ########################################################################################
+    ################uwzględnianie aa ad#####################################################
+
+    a = 0
+    if roboczareceptura.objects.last().aa_ad=='on':#tutaj sprawdzam na ile składników trzeba podzielić ilość gramów z aa ad
+
+        last.gramy = ''
+        last.save()
+        sumskl = sumskl - int(last.aa_ad_gramy)
+        for el in roboczareceptura.objects.all().order_by('-pk'):#order_by('-pk')
+            print('el.gramy:', el.gramy,'el.obey!=None',el.obey!=None)
+            sys.stdout.flush()
+            if el.obey!=None or el.gramy=='':
+                a=a+1
+            else:
+                break
+            print('dzelnik', a)
+            sys.stdout.flush()
+        print('dzelnik', a)
+        sys.stdout.flush()
+
+        # if last.aa_ad_gramy=='':
+        #     last.aa_ad_gramy=last.gramy
+        #     last.save()
+
+        for el in roboczareceptura.objects.all().order_by('-pk'):#order_by('-pk')
+            if el.pk<l and el.gramy != "":
+                break
+            else:
+                if last.aa_ad_gramy!='' and a>0:
+
+                    el.gramy = str(round((int(last.aa_ad_gramy)-sumskl)/a,2))
+                    el.obey = l
+                    el.save()
+        sumskl=0
+        for el in all:
+            if el.obey!=l:
+                sumskl+=int(el.gramy)
+
+        for el in roboczareceptura.objects.all().order_by('-pk'):#order_by('-pk')
+            if  el.obey !=l or el.gramy=='':
+                break
+            else:
+                if last.aa_ad_gramy!='' and a>0:
+
+                    el.gramy = str(round((int(last.aa_ad_gramy)-sumskl)/a,2))
+
+                    el.save()
+
+    #####################################################################################
     datax = serializers.serialize("python", roboczareceptura.objects.all())
     return JsonResponse({'tabela_zbiorcza':datax})
 
